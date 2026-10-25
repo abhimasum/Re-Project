@@ -1,0 +1,32 @@
+# .NET build output
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.DotSettings.user
+TestResults/
+publish/
+appsettings.Local.json
+
+# Secrets: never commit connection strings or keys
+*.env
+.env*
+secrets.json
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+*.log
+npm-debug.log*
+
+# MAUI generated
+Platforms/**/bin/
+Platforms/**/obj/
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

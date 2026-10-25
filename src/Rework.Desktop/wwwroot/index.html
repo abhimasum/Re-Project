@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rework Station</title>
+  <base href="/" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <div id="app">Loading…</div>
+
+  <!-- Blazor Hybrid runtime -->
+  <script src="_framework/blazor.webview.js" autostart="false"></script>
+
+  <!-- Angular Elements bundle, copied in by scripts/setup-desktop.sh -->
+  <script src="angular/polyfills.js"></script>
+  <script type="module" src="angular/main.js"></script>
+
+  <!-- Bridge between Razor (C#) and the rework-panel Angular custom element -->
+  <script src="js/bridge.js"></script>
+</body>
+</html>

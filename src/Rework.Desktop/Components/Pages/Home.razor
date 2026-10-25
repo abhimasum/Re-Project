@@ -1,0 +1,73 @@
+@page "/"
+@inject IJSRuntime JS
+@inject ReworkApiClient Api
+@implements IAsyncDisposable
+
+<h2>Rework queue</h2>
+<p class="muted">Station operator view. The Angular panel below shows the queue. Actions are sent to the API from C#.</p>
+@if (_error is not null) { <div class="error">@_error</div> }
+
+<rework-panel class="rework-panel"></rework-panel>
+
+@code {
+    private DotNetObjectReference<Home>? _ref;
+    private List<ReworkItemDto> _items = [];
+    private string? _error;
+    private const string Operator = "OP-118"; // Replace with the signed-in operator once identity is wired in.
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Give the bridge a reference to this component so Angular events can call back into C#.
+            _ref = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("reworkBridge.init", _ref);
+        }
+        // Push the current list into the Angular element as a property.
+        await JS.InvokeVoidAsync("reworkBridge.setItems", _items);
+    }
+
+    /// <summary>Called from JavaScript when the Angular panel raises actionRequested.</summary>
+    [JSInvokable]
+    public async Task OnPanelAction(string id, string action)
+    {
+        try
+        {
+            var guid = Guid.Parse(id);
+            switch (action)
+            {
+                case "inspect": await Api.InspectAsync(guid, Operator); break;
+                case "approve": await Api.ApproveAsync(guid, Operator); break;
+                case "complete": await Api.CompleteAsync(guid); break;
+            }
+            _error = null;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message; // Business rule messages from the API are shown as-is.
+        }
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            _items = await Api.ListAsync(take: 200);
+            _error = null;
+        }
+        catch (Exception ex)
+        {
+            _error = $"Could not reach the rework API: {ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _ref?.Dispose();
+        return ValueTask.CompletedTask;
+    }
+}

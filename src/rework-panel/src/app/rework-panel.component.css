@@ -1,0 +1,7 @@
+.row { display: flex; justify-content: space-between; align-items: center; gap: 12px;
+       padding: 12px; border: 1px solid #1f2a38; border-radius: 8px; margin-bottom: 8px; background: #121822; }
+.desc { flex: 1; }
+.meta { color: #8a99a8; font-size: 12px; margin-top: 4px; }
+.empty { color: #8a99a8; padding: 12px; }
+button { background: linear-gradient(90deg, #38bdf8, #34d399); border: none; color: #0b0f14;
+         font-weight: 600; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
